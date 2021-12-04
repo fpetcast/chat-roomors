@@ -1,0 +1,35 @@
+{
+  "name": "chat_roomors",
+  "version": "1.0.0",
+  "description": "realtime chat app with rooms and a bot master",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server/server",
+    "dev": "nodemon server/server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fpetcast/chat-roomors.git"
+  },
+  "keywords": [
+    "chat",
+    "rooms",
+    "bot",
+    "node",
+    "express"
+  ],
+  "author": "Francesco Pettrone",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fpetcast/chat-roomors/issues"
+  },
+  "homepage": "https://github.com/fpetcast/chat-roomors#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "moment": "^2.29.1",
+    "socket.io": "^4.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
