@@ -3,6 +3,7 @@ const path = require('path')
 const http = require('http')
 const socketio = require('socket.io')
 const RoomorBot = require('../bot/RoomorBot')
+const Enum = require('../utils/enum')
 
 
 const app = express()
@@ -14,10 +15,19 @@ app.use(express.static('public'))
 
 //it runs when client connects
 io.on('connection', socket => {
-    console.log('New WS connection');
     //bot instance
     const Bot = new RoomorBot(socket.id);
-    socket.emit('message',Bot.greetings())
+    
+    //emit event on the single client connection
+    socket.emit('hello',Bot.greetings())
+
+    //To all connected clients except the sender
+    socket.broadcast.emit('message',Bot.alertUsers(Enum.JOIN))
+
+    //Run when clients disconnect
+    socket.on('disconnect', () => {
+        io.emit('message', Bot.alertUsers(Enum.LEFT))
+    })
 })
 
 
