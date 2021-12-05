@@ -1,15 +1,16 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <EnterChat></EnterChat>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+//import HelloWorld from './components/HelloWorld.vue'
+//import Room from './components/Room.vue'
+import EnterChat from './components/EnterChat.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    EnterChat
   }
 }
 </script>
