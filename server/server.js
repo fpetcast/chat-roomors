@@ -1,6 +1,8 @@
 const express = require("express");
 const path = require("path");
 const http = require("http");
+const cors = require('cors')
+const bodyParser = require('body-parser')
 const socketio = require("socket.io");
 const RoomorBot = require("../bot/RoomorBot");
 const Enum = require("../utils/enum");
@@ -8,6 +10,10 @@ const Enum = require("../utils/enum");
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
+
+//Middleware
+app.use(bodyParser.json())
+app.use(cors())
 
 //set static folder
 app.use(express.static("public"));
