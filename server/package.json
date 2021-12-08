@@ -4,8 +4,8 @@
   "description": "realtime chat app with rooms and a bot master",
   "main": "server.js",
   "scripts": {
-    "start": "node server/server",
-    "dev": "nodemon server/server"
+    "start": "node server",
+    "dev": "nodemon server"
   },
   "repository": {
     "type": "git",

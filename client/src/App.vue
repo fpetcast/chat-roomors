@@ -1,16 +1,16 @@
 <template>
-  <EnterChat></EnterChat>
+  <Room />
 </template>
 
 <script>
 //import HelloWorld from './components/HelloWorld.vue'
-//import Room from './components/Room.vue'
-import EnterChat from './components/EnterChat.vue'
+import Room from './components/Room.vue'
+// import EnterChat from './components/EnterChat.vue'
 
 export default {
   name: 'App',
   components: {
-    EnterChat
+    Room
   }
 }
 </script>

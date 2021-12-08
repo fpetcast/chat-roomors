@@ -49,8 +49,23 @@
     </div>
 </template>
 <script>
+import io from 'socket.io-client'
+
 export default {
     name: 'Room',
+    data() {
+      return {
+        socket : {},
+        msg: {
+          user: '',
+          text: '',
+          date: '',
+        }
+      }
+    },
+    created() {
+      this.socket = io.("http://localhost:4000")
+    },
 }
 </script>
 <style lang="">
