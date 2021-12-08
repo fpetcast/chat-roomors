@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io("http://localhost:4000");
 const chatInput = document.getElementById('chat-form');
 
 socket.on("connect", () => {
