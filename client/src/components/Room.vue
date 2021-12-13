@@ -49,13 +49,13 @@
     </div>
 </template>
 <script>
-import io from 'socket.io-client'
+const io = require("socket.io-client");
 
 export default {
     name: 'Room',
     data() {
       return {
-        socket : {},
+        socket : io('http://localhost:4000/', {secure: true, credentials: true}),
         msg: {
           user: '',
           text: '',
@@ -64,7 +64,7 @@ export default {
       }
     },
     created() {
-      this.socket = io.("http://localhost:4000")
+    console.log(this.socket);
     },
 }
 </script>
