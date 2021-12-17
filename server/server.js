@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const http = require("http");
+const fs = require('fs');
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser');
@@ -10,9 +11,14 @@ const url = require('url');
 const RoomorBot = require("./bot/RoomorBot");
 const Enum = require("./utils/enum");
 const fn = require("./utils/fn");
+const { rawListeners } = require("process");
 
 
 const app = express();
+
+//CONFIG
+let rawConfig = fs.readFileSync('./config/config.json');
+const config = JSON.parse(rawConfig);
 
 //MIDDLAWARES
 // let allowCrossDomain = function(req, res, next) {
@@ -43,6 +49,30 @@ const io = socketio(server, {
 app.use(express.static("../public"));
 
 //Socket
+
+// io.use((socket, next) => {
+//   const sessionID = socket.handshake.auth.sessionID;
+//   if (sessionID) {
+//     // find existing session
+//     const session = sessionStore.findSession(sessionID);
+//     if (session) {
+//       socket.sessionID = sessionID;
+//       socket.userID = session.userID;
+//       socket.username = session.username;
+//       return next();
+//     }
+//   }
+//   const username = socket.handshake.auth.username;
+//   if (!username) {
+//     return next(new Error("invalid username"));
+//   }
+//   // create new session
+//   socket.sessionID = randomId();
+//   socket.userID = randomId();
+//   socket.username = username;
+//   next();
+// });
+
 io.on("connection", (socket) => {
   console.log('a client has connected');
 
@@ -51,34 +81,44 @@ io.on("connection", (socket) => {
 
   //
   socket.on('joinEvent', (user) => {
+    //username and room for a single session
+    socket.username = user.username
+    socket.room = user.room
+
+    console.log(socket.room);
+    //join the selected room
+    socket.join(socket.room);
+    //chekc the room and the related clients
+    console.log(socket.rooms);
 
     //emit event on the single client connection
     socket.emit("hello", Bot.greetings(user.username));
 
     //To all connected clients except the sender
-    socket.broadcast.emit("botAlert", Bot.alertUsers(Enum.JOIN));
+    io.to(socket.room).emit("botAlert", Bot.alertUsers(Enum.JOIN, socket.username));
   })
 
   //Run when clients disconnect
   socket.on("disconnect", () => {
-    io.emit("botAlert", Bot.alertUsers(Enum.LEFT));
+    io.to(socket.room).emit("botAlert", Bot.alertUsers(Enum.LEFT, socket.username));
   });
 
   //listen for client message
   socket.on("newMsg", (msg) => {
-    io.emit("msg", fn.sendClientMsg(msg, 'User'));
+    io.to(socket.room).emit("msg", fn.sendClientMsg(msg, socket.username));
   });
 });
 
 //ROUTING
 app.get('/', function(req, res) {
-  res.render('index')
+  const rooms = config.rooms;
+  console.log(rooms);
+  res.render('index', { 
+    rooms: rooms
+  })
 });
 
 app.get('/chat', (req, res) => {
-  // res.cookie('username', username);
-  // res.cookie('room', room)
-  // res.send('good');
   res.render('chat');
 })
 

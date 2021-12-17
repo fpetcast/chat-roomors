@@ -7,13 +7,24 @@ const chatMessagesContainer = document.getElementById('.chat-messages');
 //send username and room to the server
 const urlParams = new URLSearchParams(window.location.search);
 console.log(urlParams.get('username'));
+let users = [];
 let username = urlParams.get('username')
 let room = urlParams.get('room')
+document.getElementById('room-name').innerText = room;
 
-socket.emit('joinEvent', {username , room})
+
+socket.on("connect", () => {
+    socket.emit('joinEvent', {username , room})
+    users.push(username);
+    users.forEach(user => {
+        let li = document.createElement("li");
+        document.getElementById('users').append(li);
+        li.innerText = user;
+    });
+});
 
 //Roomor Bot greetings
-socket.once("hello", (greeting) => {
+socket.on("hello", (greeting) => {
     setTimeout(() => {
         outputMsg(greeting)
     }, 600);
@@ -31,11 +42,11 @@ chatInput.addEventListener('submit', (e) => {
 e.preventDefault();
 
 //emit message to the server
-const msg = e.target.elements.msg.value;
+let msg = e.target.elements.msg.value;
 socket.emit('newMsg', msg)
 
 //clear the input
-msg = '';
+e.target.elements.msg.value = '';
 e.target.elements.msg.focus();
 })
 

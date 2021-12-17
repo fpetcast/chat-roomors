@@ -8,16 +8,16 @@ class RoomorBot {
     }
 
     greetings(username) {
-        return this.sendMsg('Welcome to CHAT ROOMORS')
+        return this.sendMsg(`Hi ${username}! Welcome to CHAT ROOMORS`)
     }
 
-    alertUsers(type) {
+    alertUsers(type, username) {
         switch (type) {
             case Enum.JOIN:
-                return this.sendMsg('A user joined the chat');
+                return this.sendMsg(`${username} joined the chat`);
                 break;
             case Enum.LEFT:
-                    return this.sendMsg('A user left the chat');
+                    return this.sendMsg(`${username} left the chat`);
                     break;
             default:
                 break;
