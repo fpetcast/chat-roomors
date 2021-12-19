@@ -13,3 +13,18 @@ export function outputMsg(msg, chatContainer) {
     chatContainer = div.parentElement
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
+
+export async function updateUsers(room) {
+    const users = await fetch('/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(room),
+    }).then((response) => {
+        response.json()
+    })
+    .then((data) => {
+        console.log(data);
+    })
+}

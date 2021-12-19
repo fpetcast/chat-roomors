@@ -2,8 +2,7 @@ const Enum = require('../utils/enum')
 const moment = require('moment')
 
 class RoomorBot {
-    constructor(id, name) {
-        this.id = id;
+    constructor(name) {
         this.name = name;
     }
 

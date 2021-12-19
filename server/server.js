@@ -7,6 +7,7 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser');
 const socketio = require("socket.io");
 const url = require('url');
+const moment = require('moment');
 //my modules
 const RoomorBot = require("./bot/RoomorBot");
 const Enum = require("./utils/enum");
@@ -16,9 +17,6 @@ const { rawListeners } = require("process");
 
 const app = express();
 
-//CONFIG
-let rawConfig = fs.readFileSync('./config/config.json');
-const config = JSON.parse(rawConfig);
 
 //MIDDLAWARES
 // let allowCrossDomain = function(req, res, next) {
@@ -50,6 +48,11 @@ app.use(express.static("../public"));
 
 //Socket
 
+const users = []
+const Bot = new RoomorBot(Enum.BOTNAME);
+let rawConfig = fs.readFileSync('./config/config.json');
+const config = JSON.parse(rawConfig);
+
 // io.use((socket, next) => {
 //   const sessionID = socket.handshake.auth.sessionID;
 //   if (sessionID) {
@@ -73,39 +76,76 @@ app.use(express.static("../public"));
 //   next();
 // });
 
+
+
 io.on("connection", (socket) => {
-  console.log('a client has connected');
 
-  //bot instance
-  const Bot = new RoomorBot(socket.id, Enum.BOTNAME);
-
-  //
-  socket.on('joinEvent', (user) => {
+  socket.on('joinEvent', ({username, room}) => {
     //username and room for a single session
-    socket.username = user.username
-    socket.room = user.room
+    socket.username = username
+    socket.room = room
+    let userJoin = fn.createUser(socket.id, socket.username, socket.room);
+    console.log('############################');
+    console.log('connect: ' +  userJoin.username + ' to ' + room);
+    console.log(userJoin);
+    console.log('############################');
 
-    console.log(socket.room);
+    users.push(userJoin);
+
+    
     //join the selected room
-    socket.join(socket.room);
-    //chekc the room and the related clients
-    console.log(socket.rooms);
+    socket.join(room);
+    console.log('############################');
+    console.log(users);
+    console.log('############################');
 
-    //emit event on the single client connection
-    socket.emit("hello", Bot.greetings(user.username));
+    //check the room and the related clients
+    // console.log(socket.rooms);
+
+    //emit event to all the users in the room
+    // io.to(user.room).emit("hello", Bot.greetings(user.username));
+
+    //updating Room
+    io.to(room).emit("updateRoom", users);
 
     //To all connected clients except the sender
-    io.to(socket.room).emit("botAlert", Bot.alertUsers(Enum.JOIN, socket.username));
+    io.to(room).emit("botAlert", Bot.alertUsers(Enum.JOIN, socket.username));
   })
-
-  //Run when clients disconnect
-  socket.on("disconnect", () => {
-    io.to(socket.room).emit("botAlert", Bot.alertUsers(Enum.LEFT, socket.username));
-  });
 
   //listen for client message
   socket.on("newMsg", (msg) => {
-    io.to(socket.room).emit("msg", fn.sendClientMsg(msg, socket.username));
+    console.log(users);
+    let currentUser
+    users.forEach(user => {
+      if (user.id == socket.id) {
+        currentUser = user
+      }
+    });
+    console.log(currentUser);
+    io.to(socket.room).emit("msg", fn.sendClientMsg(msg, currentUser.username));
+  });
+
+  //Run when clients disconnect
+  socket.on("disconnect", () => {
+    let user = fn.findUser(users, socket.id);
+    console.log('############################');
+    console.log('disconnect: '+ user.username);
+    console.log(user);
+    console.log('############################');
+
+    const index = users.indexOf(user);
+    if (index > -1) {
+      users.splice(index, 1)[0];
+    }
+
+    socket.leave(user.room)
+    console.log('############################');
+    console.log(users);
+    console.log('############################');
+
+    io.to(user.room).emit("updateRoom", users);
+
+    socket.to(user.room).emit("botAlert", Bot.alertUsers(Enum.LEFT, socket.username));
   });
 });
 
@@ -121,6 +161,12 @@ app.get('/', function(req, res) {
 app.get('/chat', (req, res) => {
   res.render('chat');
 })
+
+// app.post('/users', (req, res) => {
+//   console.log(req);
+//   let room = req.room;
+//   var clients = io.sockets.clients(room);
+// })
 
 //PORT and SERVING the node app
 const PORT = 4000 || process.env.PORT;
