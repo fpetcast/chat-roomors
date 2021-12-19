@@ -127,25 +127,30 @@ io.on("connection", (socket) => {
 
   //Run when clients disconnect
   socket.on("disconnect", () => {
-    let user = fn.findUser(users, socket.id);
+    let currentUser
+    users.forEach(user => {
+      if (user.id == socket.id) {
+        currentUser = user
+      }
+    });
     console.log('############################');
-    console.log('disconnect: '+ user.username);
-    console.log(user);
+    console.log('disconnect: '+ currentUser.username);
+    console.log(currentUser);
     console.log('############################');
 
-    const index = users.indexOf(user);
+    const index = users.indexOf(currentUser);
     if (index > -1) {
       users.splice(index, 1)[0];
     }
 
-    socket.leave(user.room)
+    socket.leave(socket.room)
     console.log('############################');
     console.log(users);
     console.log('############################');
 
-    io.to(user.room).emit("updateRoom", users);
+    io.to(socket.room).emit("updateRoom", users);
 
-    socket.to(user.room).emit("botAlert", Bot.alertUsers(Enum.LEFT, socket.username));
+    socket.to(socket.room).emit("botAlert", Bot.alertUsers(Enum.LEFT, socket.username));
   });
 });
 
