@@ -8,6 +8,14 @@ function sendClientMsg(text, user) {
     }
 }
 
+function sendMeta(values, user) {
+    return {
+        time: moment().format('h:mm a'),
+        meta: values,
+        user: user,
+    }
+}
+
 function createUser(id, username, room) {
     let entered = moment().format('h:mm a')
 
@@ -30,5 +38,6 @@ function findUser(users, id) {
 module.exports = {
     sendClientMsg,
     findUser,
-    createUser
+    createUser,
+    sendMeta
 }

@@ -21,7 +21,7 @@
 			<main class="join-main">
 				<form id="chat-selection" action="chat" method="GET">
 					<div class="form-control">
-						<label for="username">Username</label>
+						<label for="username">Guest</label>
 						<input
 							type="text"
 							name="username"
@@ -35,12 +35,13 @@
 						<select name="room" id="room">
 							<%for (room in rooms){%>
 								<%= rooms[room] %> 
-								<option value="<%= rooms[room] %> "><%= rooms[room] %> </option>
+								<option value="<%= rooms[room] %>"><%= rooms[room] %> </option>
 							<% } %>
 						</select>
 					</div>
 					<button type="submit" class="btn">Join Chat</button>
 				</form>
+				<button class="btn btn-primary">Register</button>
 			</main>
 		</div>
 		<script type="module" src="../js/login.js"></script>

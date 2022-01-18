@@ -125,6 +125,24 @@ io.on("connection", (socket) => {
     io.to(socket.room).emit("msg", fn.sendClientMsg(msg, currentUser.username));
   });
 
+  //listen for meta calls
+  socket.on("metaCall", (msg) => {
+    console.log(users);
+    console.log('metacall: ' + msg);
+    let currentUser
+    let result
+
+    users.forEach(user => {
+      if (user.id == socket.id) {
+        currentUser = user
+      }
+    });
+
+    result = Bot.elaborateMeta(msg);
+    console.log(result);
+    io.to(socket.room).emit("metaResponse", fn.sendMeta( result, currentUser.username));
+  });
+
   //Run when clients disconnect
   socket.on("disconnect", () => {
     let currentUser

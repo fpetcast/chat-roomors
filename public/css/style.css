@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
 :root {
-	--dark-color-a: #667aff;
-	--dark-color-b: #7386ff;
-	--light-color: #e6e9ff;
+	--dark-color-a: #ff8500;
+	--dark-color-b: #ff9e00;
+	--light-color: #faf9f9;
 	--success-color: #5cb85c;
 	--error-color: #d9534f;
 }
@@ -130,6 +130,7 @@ a {
 .join-container {
 	max-width: 500px;
 	margin: 80px auto;
+	transform: translateY(10%);
 	color: #fff;
 }
 

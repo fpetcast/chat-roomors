@@ -5,6 +5,7 @@ const chatInput = document.getElementById('chat-form');
 const chatMessagesContainer = document.getElementById('.chat-messages');
 const chatUsersList = document.getElementById('users');
 const socketHiddenInput = document.getElementById('socketInput');
+const metaChar = '@'
 
 //send username and room to the server
 const urlParams = new URLSearchParams(window.location.search);
@@ -54,7 +55,13 @@ e.preventDefault();
 let userMsg;
 let msg = e.target.elements.msg.value;
 
-socket.emit('newMsg', msg)
+if(msg.includes(metaChar) & msg.indexOf(metaChar) == 0) {
+    console.log('this is a metacall: ' + msg);
+    socket.emit('metaCall', msg);
+}else {
+    socket.emit('newMsg', msg)
+}
+
 
 //clear the input
 e.target.elements.msg.value = '';
@@ -69,4 +76,8 @@ socket.on("msg", (newMsg) => {
     }, 600);
 })
 
+//Receive meta event
+socket.on("metaResponse", (meta) => {
+    console.log(meta);
+})
 

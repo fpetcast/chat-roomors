@@ -1,9 +1,17 @@
+const BOTNAME = 'Roomor Bot'
+
+//room events
 const JOIN = 'join';
 const LEFT = 'left';
-const BOTNAME = 'Roomor Bot'
+
+//meta enums
+const METACODE_ERR = 'meta_err'
+const METAVOTE = 'vote';
 
 module.exports = {
     JOIN,
     LEFT,
-    BOTNAME
+    BOTNAME,
+    METACODE_ERR,
+    METAVOTE
 }
